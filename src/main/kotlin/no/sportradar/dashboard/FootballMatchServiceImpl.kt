@@ -18,11 +18,17 @@ internal class FootballMatchServiceImpl : FootballMatchService {
     }
 
     override fun updateMatchDetails(football: FootballMatch) {
-        TODO("Not yet implemented")
+        football.findExistingMatch()
+            ?.let {
+                footballTeams.remove(it)
+                footballTeams.add(it.copy(homeTeamPoints = football.homeTeamPoints, awayTeamPoints = football.awayTeamPoints))
+            } ?: throw NoMatchFoundException("No match found to update with the specified details: $football")
     }
 
     override fun finishMatch(football: FootballMatch) {
-        TODO("Not yet implemented")
+        football.findExistingMatch()
+            ?.let { footballTeams.remove(it) }
+            ?: throw NoMatchFoundException("No processing match found to finish with the specified details: $football")
     }
 
     override fun getSummaryDashboard(): List<FootballMatch> =
@@ -40,4 +46,7 @@ internal class FootballMatchServiceImpl : FootballMatchService {
             it.homeTeamName == homeTeamName || it.homeTeamName == awayTeamName
                     || it.awayTeamName == homeTeamName || it.awayTeamName == awayTeamName
         }
+
+    private fun FootballMatch.findExistingMatch(): FootballMatch? =
+        footballTeams.find { it.homeTeamName == homeTeamName && it.awayTeamName == awayTeamName }
 }
