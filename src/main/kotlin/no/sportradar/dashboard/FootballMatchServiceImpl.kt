@@ -25,9 +25,12 @@ internal class FootballMatchServiceImpl : FootballMatchService {
         TODO("Not yet implemented")
     }
 
-    override fun getSummaryDashboard(): List<FootballMatch> {
-        TODO("Not yet implemented")
-    }
+    override fun getSummaryDashboard(): List<FootballMatch> =
+        footballTeams
+            .sortedWith(
+                compareByDescending<FootballMatch> { it.homeTeamPoints + it.awayTeamPoints }
+                    .thenByDescending { it.created }
+            )
 
     private fun FootballMatch.isMatchAlreadyExists(): Boolean =
         footballTeams.any { it.homeTeamName == homeTeamName && it.awayTeamName == awayTeamName }
