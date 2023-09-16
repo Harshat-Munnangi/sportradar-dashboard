@@ -6,6 +6,7 @@ plugins {
 
 group = "no.sportradar.football"
 version = "1.0-SNAPSHOT"
+description = "sportradar-dashboard"
 
 repositories {
     mavenCentral()
@@ -13,6 +14,15 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+    testImplementation("org.assertj:assertj-core:3.24.2")
+}
+
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of("17"))
+    }
 }
 
 tasks.test {
