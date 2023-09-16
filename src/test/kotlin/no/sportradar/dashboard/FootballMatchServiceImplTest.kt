@@ -63,4 +63,30 @@ class FootballMatchServiceImplTest {
         footballMatchServiceImpl.startMatch("HomeTeam4", "AwayTeam4")
         assertThat(footballMatchServiceImpl.getSummaryDashboard().size).isEqualTo(3)
     }
+
+    @Test
+    fun `should update a match score` () {
+        footballMatchServiceImpl.startMatch("HomeTeam1", "AwayTeam1")
+        footballMatchServiceImpl.startMatch("HomeTeam2", "AwayTeam2")
+        assertThat(footballMatchServiceImpl.getSummaryDashboard().size).isEqualTo(2)
+        val modifiedMatch = FootballMatch("HomeTeam2", 4, "AwayTeam2", 7)
+        footballMatchServiceImpl.updateMatchDetails(modifiedMatch)
+        val updatedMatchList = footballMatchServiceImpl.getSummaryDashboard()
+        assertThat(updatedMatchList.size).isEqualTo(2)
+        updatedMatchList
+            .first { it.homeTeamName == modifiedMatch.homeTeamName && it.awayTeamName == modifiedMatch.awayTeamName }
+            .let {
+                assertThat(it.homeTeamPoints).isEqualTo(modifiedMatch.homeTeamPoints)
+                assertThat(it.awayTeamPoints).isEqualTo(modifiedMatch.awayTeamPoints)
+            }
+    }
+
+    @Test
+    fun `should throw error if attempt to update a non-existed match` () {
+        footballMatchServiceImpl.startMatch("HomeTeam1", "AwayTeam1")
+        footballMatchServiceImpl.startMatch("HomeTeam2", "AwayTeam2")
+        val nonExistingMatch = FootballMatch("HomeTeam12", 5, "AwayTeam1", 7)
+        assertThrows<NoMatchFoundException> { footballMatchServiceImpl.updateMatchDetails(nonExistingMatch) }
+        assertThat(footballMatchServiceImpl.getSummaryDashboard().size).isEqualTo(2)
+    }
 }
